@@ -1,0 +1,25 @@
+{
+  "id": "32896ae2-f5e4-4cf0-b3bd-ea591fa7fcf0",
+  "created_at": "2026-04-21T15:03:11.646919",
+  "title": "New Conversation",
+  "messages": [
+    {
+      "role": "user",
+      "content": "what is 2+2"
+    },
+    {
+      "role": "assistant",
+      "stage1": [
+        {
+          "model": "gemini-2.5-flash",
+          "response": "2 + 2 = 4"
+        }
+      ],
+      "stage2": [],
+      "stage3": {
+        "model": "llama-3.3-70b-versatile",
+        "response": "Error: Unable to generate final synthesis. The chairman model may be experiencing rate limits or the prompt may be too long. Please try again or ask a shorter question."
+      }
+    }
+  ]
+}

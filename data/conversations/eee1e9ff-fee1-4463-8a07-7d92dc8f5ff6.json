@@ -1,0 +1,20 @@
+{
+  "id": "eee1e9ff-fee1-4463-8a07-7d92dc8f5ff6",
+  "created_at": "2026-04-21T14:54:56.592430",
+  "title": "New Conversation",
+  "messages": [
+    {
+      "role": "user",
+      "content": "whats the latest news about indian pm "
+    },
+    {
+      "role": "assistant",
+      "stage1": [],
+      "stage2": [],
+      "stage3": {
+        "model": "llama-3.3-70b-versatile",
+        "response": "Error: Unable to generate final synthesis. The chairman model may be experiencing rate limits or the prompt may be too long. Please try again or ask a shorter question."
+      }
+    }
+  ]
+}

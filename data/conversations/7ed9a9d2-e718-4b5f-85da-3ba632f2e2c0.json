@@ -1,0 +1,20 @@
+{
+  "id": "7ed9a9d2-e718-4b5f-85da-3ba632f2e2c0",
+  "created_at": "2026-04-21T14:57:06.410303",
+  "title": "New Conversation",
+  "messages": [
+    {
+      "role": "user",
+      "content": "what is 2+2"
+    },
+    {
+      "role": "assistant",
+      "stage1": [],
+      "stage2": [],
+      "stage3": {
+        "model": "llama-3.3-70b-versatile",
+        "response": "Error: Unable to generate final synthesis. The chairman model may be experiencing rate limits or the prompt may be too long. Please try again or ask a shorter question."
+      }
+    }
+  ]
+}
