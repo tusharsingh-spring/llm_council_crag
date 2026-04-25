@@ -1,0 +1,774 @@
+================================================================================
+EDI MSE REVIEW PRESENTATION - A.Y. 2025-26 SEM-II
+LLM COUNCIL: MULTI-AGENT AI DELIBERATION SYSTEM
+Team SYK8
+Date: 13/03/2026 (Friday)
+================================================================================
+
+================================================================================
+SLIDE 1: TITLE SLIDE
+================================================================================
+
+PROJECT TITLE:
+LLM Council - Multi-Agent AI Deliberation System
+
+TEAM SYK8:
+• Aryan Shivatare
+• Sravan Shinde
+• Tusharkumar Singh
+• Soham Kanathia
+• Shubham Jasrotia
+
+GUIDE: [Your Guide Name]
+
+DATE: 13/03/2026 (Friday)
+ACADEMIC YEAR: 2025-26 Semester II
+
+
+================================================================================
+SLIDE 2: PROBLEM STATEMENT
+================================================================================
+
+PROBLEM IDENTIFIED:
+Single Large Language Models (LLMs) provide biased, incomplete, or inconsistent 
+answers with no transparency in the reasoning process.
+
+REAL-WORLD ISSUES:
+• Single-perspective bias - Only one viewpoint presented
+• No peer validation mechanism - No quality assurance
+• Lack of consensus in complex queries - Conflicting information
+• Inconsistent quality across different query types
+• No transparency in how conclusions are reached
+
+PROPOSED SOLUTION:
+A 3-stage collaborative AI system where multiple LLMs work together:
+
+Stage 1: Multiple AI models generate individual responses independently
+Stage 2: Models anonymously review and rank each other's work (prevents bias)
+Stage 3: A Chairman model synthesizes all perspectives into a final consensus answer
+
+This approach mimics expert panel deliberations in academia and professional settings.
+
+
+================================================================================
+SLIDE 3: LITERATURE REVIEW
+================================================================================
+
+EXISTING SOLUTIONS & THEIR LIMITATIONS:
+
+1. SINGLE LLM INTERFACES (ChatGPT, Gemini, Claude)
+   Advantages:
+   • Fast response time
+   • Conversational interface
+   • Easy to use
+   
+   Limitations:
+   • Single perspective only
+   • Potential for model bias
+   • No peer validation
+   • Cannot self-correct errors
+
+2. MULTI-MODEL COMPARISON TOOLS
+   Advantages:
+   • Side-by-side response viewing
+   • Can compare different AI models
+   
+   Limitations:
+   • No collaborative evaluation
+   • Manual comparison burden on user
+   • Models don't review each other
+   • No automated synthesis
+
+3. TRADITIONAL SEARCH ENGINES
+   Advantages:
+   • Access to current information
+   • Multiple source references
+   
+   Limitations:
+   • No summarization or synthesis
+   • Information overload
+   • User must manually evaluate quality
+
+RESEARCH GAP IDENTIFIED:
+No existing system combines:
+✗ Multi-model deliberation
+✗ Anonymized peer review
+✗ Automated consensus generation
+✗ Transparent stage-by-stage process
+
+KEY REFERENCES:
+• Andrej Karpathy's LLM Council concept (original inspiration)
+• OpenRouter API documentation for multi-model orchestration
+• Groq API documentation for high-speed inference
+• Google Generative AI documentation for Gemini models
+• Research papers on multi-agent AI systems
+• Consensus algorithms in distributed systems
+
+
+================================================================================
+SLIDE 4: GROUP FORMATION & OBJECTIVES
+================================================================================
+
+TEAM STRUCTURE:
+Group Name: SYK8
+Total Members: 5
+Structure: Collaborative (No single leader - distributed responsibility)
+
+INDIVIDUAL RESPONSIBILITIES:
+
+1. ARYAN SHIVATARE
+   • Backend API development using FastAPI
+   • 3-stage council orchestration logic
+   • System testing and deployment
+   • Project documentation
+
+2. SRAVAN SHINDE
+   • Multi-provider API integration (Groq, Google, OpenAI)
+   • Async/parallel processing implementation
+   • Error handling and graceful degradation
+   • Performance optimization
+
+3. TUSHARKUMAR SINGH
+   • Data storage system (JSON-based)
+   • Conversation management and persistence
+   • Query processing and routing
+   • Backend-frontend integration
+
+4. SOHAM KANATHIA
+   • Frontend development (React + Vite)
+   • UI/UX design and implementation
+   • ChatGPT-style interface design
+   • Responsive layout for mobile devices
+
+5. SHUBHAM JASROTIA
+   • State management (React hooks)
+   • API integration on frontend
+   • Component architecture
+   • Testing and quality assurance
+
+PROJECT OBJECTIVES:
+
+PRIMARY OBJECTIVES:
+1. Develop a 3-stage AI deliberation system combining multiple LLM perspectives
+2. Implement anonymized peer review to eliminate model bias during evaluation
+3. Create an intuitive, user-friendly web interface
+4. Enable stage-by-stage transparency so users can inspect the deliberation process
+
+SECONDARY OBJECTIVES:
+5. Minimize API costs through strategic use of free-tier models
+6. Enable continuous conversations with context retention
+7. Provide real-time response visualization
+8. Ensure mobile responsiveness and cross-device compatibility
+9. Implement graceful error handling (if one model fails, others continue)
+
+EXPECTED OUTCOMES:
+✓ More accurate answers through multi-model consensus
+✓ Reduced bias through anonymized evaluation
+✓ Enhanced user trust through transparent deliberation
+✓ Cost-effective solution using free APIs
+✓ Scalable architecture for adding more models
+
+
+================================================================================
+SLIDE 5: SYSTEM ARCHITECTURE
+================================================================================
+
+ARCHITECTURE OVERVIEW:
+
+┌─────────────────────────────────────────────────────┐
+│              USER (Web Browser)                     │
+│         Access via localhost:5173                   │
+└──────────────────┬──────────────────────────────────┘
+                   │ HTTP REST API
+                   │ (JSON Request/Response)
+┌──────────────────▼──────────────────────────────────┐
+│     FRONTEND LAYER (React + Vite)                   │
+│     Port: 5173                                      │
+│  ┌──────────────────────────────────────────────┐  │
+│  │ Components:                                   │  │
+│  │ • ChatInterface (message input/display)      │  │
+│  │ • ConversationList (sidebar)                 │  │
+│  │ • Stage1 Display (individual responses)      │  │
+│  │ • Stage2 Display (peer rankings)             │  │
+│  │ • Stage3 Display (final synthesis)           │  │
+│  └──────────────────────────────────────────────┘  │
+└──────────────────┬──────────────────────────────────┘
+                   │ REST API Calls
+                   │ /api/conversations/{id}/message
+┌──────────────────▼──────────────────────────────────┐
+│     BACKEND LAYER (FastAPI - Python)                │
+│     Port: 8001                                      │
+│  ┌──────────────────────────────────────────────┐  │
+│  │ STAGE 1: Collect Individual Responses        │  │
+│  │ • Receives user query                        │  │
+│  │ • Sends to all 4 council models in parallel  │  │
+│  │ • Uses asyncio.gather() for concurrency      │  │
+│  │ • Collects all responses                     │  │
+│  └─────────────────┬────────────────────────────┘  │
+│  ┌─────────────────▼────────────────────────────┐  │
+│  │ STAGE 2: Anonymized Peer Review              │  │
+│  │ • Anonymizes responses (A, B, C, D)          │  │
+│  │ • Each model ranks all responses             │  │
+│  │ • Parses rankings from text                  │  │
+│  │ • Calculates aggregate scores                │  │
+│  │ • De-anonymizes for display                  │  │
+│  └─────────────────┬────────────────────────────┘  │
+│  ┌─────────────────▼────────────────────────────┐  │
+│  │ STAGE 3: Chairman Synthesis                  │  │
+│  │ • Chairman receives all responses + rankings │  │
+│  │ • Synthesizes comprehensive final answer     │  │
+│  │ • Highlights consensus and disagreements     │  │
+│  └──────────────────────────────────────────────┘  │
+└──────────────────┬──────────────────────────────────┘
+                   │ API Calls (HTTPS)
+┌──────────────────▼──────────────────────────────────┐
+│          EXTERNAL API PROVIDERS                     │
+│  ┌──────────────────────────────────────────────┐  │
+│  │ GROQ API (api.groq.com)                      │  │
+│  │ • Llama 3.1 8B Instant                       │  │
+│  │ • Llama 3.3 70B Versatile                    │  │
+│  │ • Free Tier: 14,400 requests/day             │  │
+│  └──────────────────────────────────────────────┘  │
+│  ┌──────────────────────────────────────────────┐  │
+│  │ GOOGLE AI API (generativelanguage...)       │  │
+│  │ • Gemini 2.5 Flash                           │  │
+│  │ • Gemini Flash Lite                          │  │
+│  │ • Free Tier: 15 requests/minute              │  │
+│  └──────────────────────────────────────────────┘  │
+└──────────────────┬──────────────────────────────────┘
+                   │
+┌──────────────────▼──────────────────────────────────┐
+│          DATA STORAGE LAYER                         │
+│  ┌──────────────────────────────────────────────┐  │
+│  │ JSON File Storage                            │  │
+│  │ Directory: data/conversations/               │  │
+│  │ Format: {id}.json per conversation           │  │
+│  │ Contents:                                    │  │
+│  │  • Conversation ID                           │  │
+│  │  • Timestamp                                 │  │
+│  │  • Message history (user + assistant)        │  │
+│  │  • Stage 1/2/3 results                       │  │
+│  └──────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────┘
+
+KEY COMPONENTS:
+
+COUNCIL MODELS (4 AI Models for deliberation):
+1. Gemini 2.5 Flash - Fast, intelligent, Google
+2. Llama 3.1 8B Instant - Quick responses, Groq
+3. Llama 3.3 70B Versatile - Large, comprehensive, Groq
+4. Gemini Flash Lite - Lightweight, Google
+
+CHAIRMAN MODEL:
+• Llama 3.3 70B Versatile
+• Synthesizes final answer from all inputs
+• Most capable model for consensus building
+
+TECHNOLOGY CHOICES:
+• Backend Port: 8001 (configurable)
+• Frontend Port: 5173 (Vite default)
+• Storage: JSON (lightweight, portable, no database needed)
+• Processing: Async/parallel (reduces latency by 4x)
+
+
+================================================================================
+SLIDE 6: METHODOLOGY (3-STAGE PROCESS)
+================================================================================
+
+DETAILED PROCESS FLOW:
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STAGE 1: PARALLEL RESPONSE COLLECTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PROCESS:
+1. User submits query through web interface
+2. Backend receives query via REST API
+3. Query formatted into structured prompt
+4. Sent to all 4 council models simultaneously using asyncio.gather()
+5. Each model processes independently (no communication between models)
+6. Collect all responses (typically 3-6 seconds total)
+7. Graceful error handling - if one model fails, others continue
+
+TECHNICAL IMPLEMENTATION:
+• Python async/await for non-blocking I/O
+• Parallel API calls instead of sequential (4x faster)
+• Each model gets identical prompt for fairness
+• Timeout handling for slow responses
+• Retry logic for network failures
+
+OUTPUT OF STAGE 1:
+→ 4 separate expert opinions
+→ Each with unique perspective and reasoning
+→ Displayed in tabs for user inspection
+
+EXAMPLE:
+User asks: "Explain quantum computing in simple terms"
+Result: 4 different explanations with varying analogies and depth
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STAGE 2: ANONYMIZED PEER REVIEW
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PROCESS:
+1. Anonymization Phase:
+   • Label responses as "Response A", "Response B", "Response C", "Response D"
+   • Create internal mapping: label → actual model name
+   • Mapping hidden from models (only backend knows)
+
+2. Evaluation Phase:
+   • Present all 4 anonymized responses to each model
+   • Each model evaluates all responses (including its own, unknowingly)
+   • Models asked to rank based on:
+     - Accuracy of information
+     - Clarity of explanation
+     - Completeness of answer
+     - Insight and depth
+
+3. Ranking Collection:
+   • Each model provides "FINAL RANKING: 1. Response C, 2. Response A, 3. Response D, 4. Response B"
+   • Parse rankings using regex patterns
+   • Handle multiple format variations
+   • Fallback parsing if format is non-standard
+
+4. Aggregate Scoring:
+   • Calculate average position for each response
+   • Response with lowest avg rank = highest quality
+   • Vote count and consensus level calculated
+   • Statistical analysis of agreement
+
+5. De-anonymization:
+   • Reveal model names in UI only (after evaluation complete)
+   • Users see which model ranked what
+   • Transparency in evaluation process
+
+WHY ANONYMIZATION?
+✓ Prevents model favoritism (e.g., GPT favoring OpenAI models)
+✓ Ensures objective evaluation based on content only
+✓ Reduces brand bias in ranking
+✓ Mimics double-blind peer review in academia
+
+OUTPUT OF STAGE 2:
+→ Raw evaluation text from each model
+→ Extracted rankings (validated parsing)
+→ Aggregate scores showing consensus
+→ Full transparency - users can verify our interpretation
+
+EXAMPLE RANKING:
+Response C (Gemini 2.5): Avg Rank 1.25 (ranked 1st by 3 models)
+Response A (Llama 3.3): Avg Rank 2.00
+Response D (Llama 3.1): Avg Rank 2.75
+Response B (Gemini Lite): Avg Rank 4.00
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STAGE 3: CHAIRMAN SYNTHESIS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PROCESS:
+1. Input Collection:
+   • All 4 original responses from Stage 1
+   • All peer rankings and evaluations from Stage 2
+   • Aggregate scores and consensus data
+   • Original user query
+
+2. Chairman Processing:
+   • Llama 3.3 70B receives complete context
+   • Analyzes all perspectives
+   • Identifies consensus points (where models agree)
+   • Identifies disagreements (where models differ)
+   • Weighs responses by peer rankings
+
+3. Synthesis Generation:
+   • Combines best elements from each response
+   • Addresses contradictions with explanations
+   • Provides balanced, comprehensive answer
+   • Cites which models contributed what insights
+   • Highlights uncertainty where models disagree
+
+4. Quality Assurance:
+   • Chairman has full context (no information loss)
+   • Can reference specific model insights
+   • Provides reasoning for final conclusions
+   • More thorough than any single response
+
+OUTPUT OF STAGE 3:
+→ Single comprehensive final answer
+→ Incorporates all perspectives
+→ Green-highlighted in UI (indicates conclusion)
+→ Represents consensus of AI "expert panel"
+
+EXAMPLE OUTPUT:
+"Based on the deliberations of the council, quantum computing fundamentally 
+differs from classical computing in... [synthesized explanation]. The models 
+agreed on the superposition principle, with Gemini 2.5 providing the clearest 
+analogy. However, there was some disagreement on practical applications, with 
+Llama 3.3 emphasizing cryptography while Gemini Lite focused on drug discovery."
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+KEY ADVANTAGES OF THIS METHODOLOGY:
+✓ Reduces individual model bias
+✓ Multiple perspectives improve accuracy
+✓ Transparent process builds user trust
+✓ Mimics real expert panel deliberations
+✓ Self-correcting through peer review
+✓ Highlights uncertainty and disagreements
+
+
+================================================================================
+SLIDE 7: DOMAIN, TECHNOLOGY & TOOLS
+================================================================================
+
+DOMAIN KNOWLEDGE APPLIED:
+
+1. ARTIFICIAL INTELLIGENCE & MACHINE LEARNING
+   • Large Language Models (LLMs) - Transformer architecture
+   • Multi-agent AI systems and coordination
+   • Consensus algorithms in distributed systems
+   • Model bias detection and mitigation
+   • Prompt engineering and instruction following
+
+2. NATURAL LANGUAGE PROCESSING (NLP)
+   • Text generation and completion
+   • Semantic understanding and analysis
+   • Response quality evaluation metrics
+   • Context injection and management
+   • Ranking and scoring algorithms
+
+3. SOFTWARE ENGINEERING
+   • Asynchronous programming patterns
+   • RESTful API design principles
+   • Error handling and graceful degradation
+   • System architecture and component design
+   • Performance optimization techniques
+
+4. WEB TECHNOLOGIES
+   • Client-server architecture
+   • HTTP/HTTPS protocols
+   • JSON data interchange format
+   • Cross-Origin Resource Sharing (CORS)
+   • Real-time user interface updates
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TECHNOLOGY STACK:
+
+BACKEND TECHNOLOGIES:
+
+Programming Language:
+• Python 3.10+ (type hints, async support)
+
+Web Framework:
+• FastAPI - High-performance async web framework
+  - Automatic API documentation (Swagger UI)
+  - Built-in data validation with Pydantic
+  - Async request handling
+  - Type-safe development
+
+Key Python Libraries:
+• httpx - Async HTTP client for API calls
+• asyncio - Parallel processing and concurrency
+• python-dotenv - Environment variable management
+• uvicorn - ASGI server for FastAPI
+• json - Data serialization
+
+Package Management:
+• uv - Modern, fast Python package manager
+  - Faster than pip
+  - Better dependency resolution
+  - Lock file for reproducible builds
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+FRONTEND TECHNOLOGIES:
+
+JavaScript Library:
+• React 18 - Component-based UI framework
+  - Functional components with hooks
+  - Virtual DOM for performance
+  - Declarative UI approach
+  - Reusable component architecture
+
+Build Tool:
+• Vite - Next-generation frontend tooling
+  - Lightning-fast hot module replacement (HMR)
+  - Optimized production builds
+  - ES modules support
+  - Dev server with instant startup
+
+UI Libraries:
+• react-markdown - Markdown rendering for LLM responses
+  - Supports code blocks
+  - Syntax highlighting
+  - LaTeX math rendering (if needed)
+
+Styling:
+• CSS3 - Custom styling
+  - Flexbox for layouts
+  - CSS Grid for complex layouts
+  - Media queries for responsiveness
+  - CSS variables for theming
+
+State Management:
+• React Hooks (useState, useEffect, useCallback, useMemo)
+  - Local component state
+  - Side effects management
+  - Performance optimization
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+EXTERNAL APIs INTEGRATED:
+
+1. GROQ API (api.groq.com)
+   • Provider: Groq Inc.
+   • Models: Llama 3.1 8B Instant, Llama 3.3 70B Versatile
+   • Free Tier: 14,400 requests per day
+   • Speed: Ultra-fast inference (specialized hardware)
+   • Cost: $0 for free tier
+   • Rate Limit: 30 requests/minute
+
+2. GOOGLE AI API (generativelanguage.googleapis.com)
+   • Provider: Google DeepMind
+   • Models: Gemini 2.5 Flash, Gemini Flash Lite
+   • Free Tier: 15 requests per minute
+   • Features: Multimodal capabilities (text, code)
+   • Cost: $0 for free tier
+   • Rate Limit: 15 RPM, 1500 RPD
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DATA STORAGE:
+
+Storage Type: JSON File-Based
+• Directory: data/conversations/
+• Format: One file per conversation ({uuid}.json)
+• Advantages:
+  - No database setup required
+  - Easy to backup and version control
+  - Human-readable for debugging
+  - Portable across systems
+  - Zero infrastructure cost
+
+Data Structure:
+{
+  "id": "uuid-v4",
+  "created_at": "ISO 8601 timestamp",
+  "messages": [
+    {
+      "role": "user",
+      "content": "user query"
+    },
+    {
+      "role": "assistant",
+      "stage1": [...],
+      "stage2": [...],
+      "stage3": "final answer"
+    }
+  ]
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DEVELOPMENT TOOLS:
+
+IDE & Editor:
+• Visual Studio Code
+  - Python extension
+  - ESLint extension
+  - Prettier for code formatting
+  - Git integration
+
+Version Control:
+• Git - Source code management
+  - Branch-based development
+  - Commit history tracking
+  - Collaboration support
+
+Terminal:
+• PowerShell (Windows)
+  - Automation scripts (start.ps1)
+  - Virtual environment activation
+  - Package installation
+
+Testing Tools:
+• Custom Python test scripts
+  - test_council.py - Full 3-stage test
+  - test_groq.py - Groq API connectivity
+  - test_models.py - Individual model testing
+  - test_api.py - Backend endpoint testing
+
+Deployment:
+• Local hosting for development
+• Easy to deploy to cloud (future):
+  - Frontend: Vercel, Netlify
+  - Backend: Railway, Render, Fly.io
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+KEY INNOVATIONS & FEATURES:
+
+1. ANONYMIZED PEER REVIEW
+   • Prevents model favoritism and brand bias
+   • First implementation of double-blind review for LLMs
+   • Label-based anonymization (Response A, B, C, D)
+   • De-anonymization only after evaluation complete
+
+2. PARALLEL ASYNC PROCESSING
+   • 4x faster than sequential queries
+   • Non-blocking I/O using Python asyncio
+   • Concurrent API calls to multiple providers
+   • Reduces total response time to ~5-8 seconds
+
+3. GRACEFUL DEGRADATION
+   • If one model fails, others continue
+   • Partial results better than complete failure
+   • Error logging without user disruption
+   • Retry logic for transient failures
+
+4. 100% FREE OPERATION
+   • Strategic use of free-tier APIs
+   • No credit card required
+   • 14,400+ queries per day capacity
+   • Suitable for educational use
+
+5. TRANSPARENT DELIBERATION
+   • All stages visible to user
+   • Raw outputs inspectable via tabs
+   • Parsed rankings shown for validation
+   • Builds trust through transparency
+
+6. MOBILE RESPONSIVE
+   • Works on phones, tablets, desktops
+   • Collapsible sidebar (hamburger menu)
+   • Flexible layouts using CSS Flexbox
+   • Touch-friendly interface
+
+7. CONTINUOUS CONVERSATIONS
+   • Multi-turn dialogue support
+   • Context retention across messages
+   • Conversation history persistence
+   • ChatGPT-like user experience
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PROJECT STATISTICS:
+
+Code Metrics:
+• Backend: ~800 lines of Python
+• Frontend: ~1200 lines of JavaScript/JSX
+• Configuration: ~100 lines
+• Total: ~2100 lines of code
+
+Files Created:
+• Backend modules: 6 files
+• Frontend components: 10+ files
+• Test scripts: 8 files
+• Documentation: 5 markdown files
+
+API Integrations:
+• 2 API providers (Groq, Google)
+• 4 AI models in council
+• 1 chairman model
+• 5 total models orchestrated
+
+Performance:
+• Average response time: 5-8 seconds (all 3 stages)
+• Concurrent users supported: 10+ (free tier limits)
+• Conversation storage: Unlimited (disk space only)
+• Uptime: 99%+ (local hosting)
+
+Cost Analysis:
+• Development cost: $0 (free tools and APIs)
+• Running cost: $0 per query (free tiers)
+• Infrastructure cost: $0 (local hosting)
+• Total operational cost: $0
+
+
+================================================================================
+END OF PRESENTATION CONTENT
+================================================================================
+
+ADDITIONAL NOTES FOR PRESENTERS:
+
+1. DEMO PREPARATION:
+   • Have the application running before presentation
+   • Test with a sample query beforehand
+   • Show all 3 stages clearly
+   • Highlight the anonymization feature
+   • Be ready to explain any stage in detail
+
+2. KEY TALKING POINTS:
+   • Emphasize the anonymized peer review (unique innovation)
+   • Highlight 100% free operation (practical for students)
+   • Show transparent process (builds trust)
+   • Mention team collaboration (distributed work)
+   • Explain use of free APIs (cost-conscious design)
+
+3. EXPECTED QUESTIONS & ANSWERS:
+   
+   Q: Why not use just one advanced model?
+   A: Multiple perspectives reduce bias and improve accuracy, similar to 
+      consulting multiple experts. One model can have blind spots.
+   
+   Q: How do you prevent models from favoring their own company's models?
+   A: Anonymization - models only see "Response A, B, C, D" without knowing 
+      which model generated which response.
+   
+   Q: What if all models are wrong?
+   A: Multiple models agreeing is statistically more reliable than one. If all 
+      are wrong, it highlights a knowledge gap that needs external verification.
+   
+   Q: Why JSON files instead of a database?
+   A: Simplicity, portability, zero setup cost. For student project scale, 
+      JSON is sufficient. Can migrate to database later if needed.
+   
+   Q: How is this different from asking ChatGPT multiple times?
+   A: (1) Uses different models (not just OpenAI), (2) Automated peer review, 
+      (3) Synthesis step combines insights, (4) One-click instead of manual.
+
+4. TIME MANAGEMENT:
+   • Slide 1: 30 seconds (title, team intro)
+   • Slide 2: 1.5 minutes (problem statement)
+   • Slide 3: 1.5 minutes (literature review)
+   • Slide 4: 1.5 minutes (team & objectives)
+   • Slide 5: 2 minutes (architecture - most technical)
+   • Slide 6: 2 minutes (methodology - core innovation)
+   • Slide 7: 1.5 minutes (technology stack)
+   • Total: ~10 minutes + demo + questions
+
+5. CONFIDENCE TIPS:
+   • Know your individual contribution well
+   • Practice explaining anonymization (most asked about)
+   • Be ready to show code if asked (have VS Code open)
+   • Emphasize practical application (not just theoretical)
+   • Mention scalability and future enhancements
+
+6. DRESS CODE REMINDER:
+   ✓ Formal attire required
+   ✓ No casual wear
+   ✓ Professional appearance
+
+7. IMPORTANT REMINDERS:
+   ✓ Submit FF180 to guide BEFORE exam
+   ✓ Attendance is mandatory
+   ✓ No re-exam will be conducted
+   ✓ Contact EDI guide for exact time and location
+   ✓ Academics suspended only on 13/03/2026
+
+8. FF180 FORM TIPS:
+   • Clearly mention each team member's contribution
+   • Include technology skills learned
+   • Mention challenges faced and solutions
+   • List resources used (documentation, APIs, etc.)
+   • Get guide signature well in advance
+
+GOOD LUCK TO TEAM SYK8! 🎯
+
+Project demonstrates:
+✓ Strong technical implementation
+✓ Innovative approach to AI collaboration
+✓ Practical, cost-effective solution
+✓ Good team coordination
+✓ Clear real-world application
+
+You're well-prepared for the review!

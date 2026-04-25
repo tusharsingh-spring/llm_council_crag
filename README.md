@@ -1,1 +1,4 @@
-# llm_council_crag
+# LLM Council
+
+**Customized by:** Aryan Shivatare
+
